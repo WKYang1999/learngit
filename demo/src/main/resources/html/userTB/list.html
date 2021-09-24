@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>userTBList</title>
+</head>
+<body class="container">
+<br/>
+<h1>用户列表</h1>
+<br/><br/>
+<div class="with:80%">
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th>#</th>
+            <th>User Name</th>
+            <th>sex</th>
+            <th>Role</th>
+            <th>Edit</th>
+            <th>Delete</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr  th:each="user:${usersTB}">
+            <th scope="row" th:text="${user.userId}">1</th>
+            <td th:text="${user.name}">neo</td>
+            <td th:text="${user.userSex}">6</td>
+            <td ><p style="margin: 2px" th:each="role:${user.roleSet}" th:text="${role.rolePost}">管理员</p></td>
+            <td><a th:href="@{/userTB/edit(id=${user.userId})}">编辑</a></td>
+            <td><a th:href="@{/userTB/delete(id=${user.userId})}">删除</a></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<div class="form-group">
+    <div class="col-sm-2 control-label">
+        <a href="#" th:href="@{/userTB/add}" class="btn btn-info">添加</a>
+        <a href="#" th:href="@{/userTB/findNA}" class="btn btn-info">名字或性别</a>
+        <a href="#" th:href="@{/userTB/findNAA}" class="btn btn-info">名字和性别</a>
+        <a href="#" th:href="@{/userTB/list}" class="btn btn-info">主页</a>
+    </div>
+</div>
+
+</body>
+</html>

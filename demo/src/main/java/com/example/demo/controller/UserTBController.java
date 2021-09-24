@@ -79,23 +79,24 @@ public class UserTBController {
         return "redirect:list";
     }
 
+    //跳转到查询页面(名字Or性别)
     @GetMapping("findNA")
     public String findNA(){
         return "userTB/findNA";
     }
-
+    //执行查询并跳转到显示页面(名字Or性别)
     @PostMapping("findNA")
     public String findNA(Model model,UserTB userTB){
         List<UserTB> userTBList = userTBService.findByNameOrUserSex(userTB.getName(),userTB.getUserSex());
         model.addAttribute("usersTB",userTBList);
         return "userTB/list";
     }
-
+    //跳转到查询页面(名字And性别)
     @GetMapping("findNAA")
     public String findNAA(){
         return "userTB/findNAA";
     }
-
+    //执行查询并跳转到显示页面(名字And性别)
     @PostMapping("findNAA")
     public String findNAA(Model model,UserTB userTB){
         List<UserTB> userTBList = userTBService.findByNameAndUserSex(userTB.getName(),userTB.getUserSex());

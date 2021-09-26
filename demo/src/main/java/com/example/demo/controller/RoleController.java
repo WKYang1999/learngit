@@ -40,7 +40,6 @@ public class RoleController {
     @GetMapping("toEdit")
     public String toEdit(Model model,Long id){
         Role role = roleService.queryById(id);
-        System.out.println("role --->" + role.showRoleAndUserSet());
         model.addAttribute("role",role);
         return "role/edit";
     }
@@ -48,7 +47,6 @@ public class RoleController {
     @PostMapping("edit")
     public String edit(Role role){
         role.setUserSet(roleService.queryById(role.getRoleId()).getUserSet());
-        System.out.println("role -->" + role.showRoleAndUserSet());
         roleService.edit(role);
         return "redirect:list";
     }

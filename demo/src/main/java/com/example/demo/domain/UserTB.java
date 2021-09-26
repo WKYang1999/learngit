@@ -20,6 +20,8 @@ public class UserTB {
     @Column(nullable = false,unique = true,length = 32)
     private String name;
     @Column(nullable = false,length = 32)
+    private String password;
+    @Column(nullable = false,length = 32)
     private String userSex;
     @JsonIgnore
     @ManyToMany(fetch = FetchType.EAGER)
@@ -46,12 +48,12 @@ public class UserTB {
         this.name = name;
     }
 
-    public String getUserSex() {
-        return userSex;
+    public String getPassword() {
+        return password;
     }
 
-    public void setUserSex(String userSex) {
-        this.userSex = userSex;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public Set<Role> getRoleSet() {
@@ -60,6 +62,14 @@ public class UserTB {
 
     public void setRoleSet(Set<Role> roleSet) {
         this.roleSet = roleSet;
+    }
+
+    public String getUserSex() {
+        return userSex;
+    }
+
+    public void setUserSex(String userSex) {
+        this.userSex = userSex;
     }
 
     @Override

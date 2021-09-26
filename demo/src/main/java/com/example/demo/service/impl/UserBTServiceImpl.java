@@ -48,4 +48,9 @@ public class UserBTServiceImpl implements UserTBService {
     public List<UserTB> findByNameAndUserSex(String name, String userSex) {
         return userTBRepository.findByNameAndUserSex(name,userSex);
     }
+
+    @Override
+    public UserTB findByNameAndPassword(String name, String password) {
+        return userTBRepository.findByNameAndPassword(name,password);
+    }
 }

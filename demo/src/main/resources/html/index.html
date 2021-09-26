@@ -1,10 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en"  xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>index</title>
 </head>
 <body>
-
+欢迎<span th:if="${session.user} != null"><span th:text="${session.user.getName()}">xxx</span></span>来到首页！
+<a th:if="${session.user} == null" th:href="@{/login}">登录</a>
+<a th:if="${session.user} != null" th:href="@{/invalidate}">注销</a>
 </body>
 </html>

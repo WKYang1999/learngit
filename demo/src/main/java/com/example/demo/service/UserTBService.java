@@ -18,4 +18,6 @@ public interface UserTBService {
     List<UserTB> findByNameOrUserSex(String name, String userSex);
 
     List<UserTB> findByNameAndUserSex(String name, String userSex);
+
+    UserTB findByNameAndPassword(String name, String password);
 }

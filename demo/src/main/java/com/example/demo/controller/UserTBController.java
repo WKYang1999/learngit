@@ -36,7 +36,7 @@ public class UserTBController {
         System.out.println("queryById user => " + user.showUserAndRoleSet());
         return user;
     }
-
+    //列表
     @GetMapping("list")
     public String list(Model model){
         Sort sort = Sort.by(Sort.Direction.DESC,"age");
@@ -44,20 +44,20 @@ public class UserTBController {
         model.addAttribute("usersTB",userTBList);
         return "userTB/list";
     }
-
+    //添加页面
     @GetMapping("add")
     public String add(Model model){
         List<Role> roles = roleService.getRoleList();
         model.addAttribute("roles",roles);
         return "userTB/add";
     }
-
+    //添加
     @PostMapping("toAdd")
     public String toAdd(UserTB userTB){
         userTBService.save(userTB);
         return "redirect:list";
     }
-
+    //修改页面
     @GetMapping("edit")
     public String edit(Model model, Long id){
         UserTB user = userTBService.queryById(id);
@@ -66,13 +66,14 @@ public class UserTBController {
         model.addAttribute("user",user);
         return "userTB/edit";
     }
-
+    //修改
     @PostMapping("toEdit")
     public String toEdit(UserTB userTB){
+        userTB.setPassword(userTBService.queryById(userTB.getUserId()).getPassword());
         userTBService.edit(userTB);
         return "redirect:list";
     }
-
+    //删除
     @GetMapping("delete")
     public String delete(Long id){
         userTBService.deleteById(id);

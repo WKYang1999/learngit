@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.neu.mapper.DeptMapper">
+
+    <select id="find" resultType="deptVO" parameterType="deptDTO">
+        select p.*,t.childCount from dept p left JOIN (select count(*) childCount,c.parentId from dept c GROUP BY c.parentId) t on p.id = t.parentId
+        <where>
+            <if test="num!=null and num!=''">
+                and p.num = #{num}
+            </if>
+            <if test="name != null and name != ''">
+                <bind name="likeName" value="'%' + _parameter.name + '%'" />
+                and p.name like #{likeName}
+            </if>
+            <choose>
+                <when test="parentId==null">
+                    and p.parentId is null
+                </when>
+                <otherwise>
+                    and p.parentId = #{parentId}
+                </otherwise>
+            </choose>
+        </where>
+    </select>
+
+    <select id="findById" resultType="deptVO">
+        select *from dept where id = #{id}
+    </select>
+
+    <insert id="add" parameterType="dept">
+        insert into dept
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            name,
+            num,
+            <if test="parentId!=null">
+            parentId,
+            </if>
+        </trim>
+        values(
+        <trim  suffix=")" suffixOverrides=",">
+            #{name},
+            #{num},
+            <if test="parentId!=null">
+            #{parentId}
+            </if>
+        </trim>
+    </insert>
+
+
+    <update id="update" parameterType="dept">
+       update dept
+       <set>
+          <if test="name != null and name != ''">
+              name = #{name},
+          </if>
+          <if test="num != null and num != ''">
+              num = #{num},
+          </if>
+          parentId = #{parentId},
+       </set>
+       where id = #{id}
+    </update>
+
+
+
+    <delete id="deleteByIds">
+        delete from dept where id in
+        <foreach collection="array" open="(" close=")" separator="," item="id">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

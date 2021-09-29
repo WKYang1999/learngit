@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.neu.mapper.VideoNumMapper">
+
+
+    <select id="find" resultType="videoNumVO" parameterType="videoNumDTO">
+        select a.videoName,a.uploadId,b.id,b.numId,b.videoId,b.name,b.sp,b.date,c.name as userName from video a,video_num b,user c
+        <where>
+            a.id = b.videoId and a.uploadId = c.id
+            <if test="name != null and name != ''">
+                <bind name="likeName" value="'%' + _parameter.name + '%'" />
+                and b.name like #{likeName}
+            </if>
+            <if test="videoId != null and videoId != ''">
+                and b.videoId = #{videoId}
+            </if>
+            <if test="uploadId != null and uploadId != ''">
+                and a.uploadId = #{uploadId}
+            </if>
+        </where>
+    </select>
+
+    <select id="findVideo" resultType="videoNumVO">
+         select a.videoName,a.uploadId,b.id,b.numId,b.videoId,b.name,b.sp,b.date,c.name as userName from video a,video_num b,user c where a.id = b.videoId and a.uploadId = c.id and videoId = #{id} order by numId asc
+    </select>
+
+   <select id="findById" resultType="videoNumVO">
+        select *from video_num where id = #{id}
+    </select>
+
+    <select id="findGK" resultType="videoNumVO">
+      select a.videoName,a.uploadId,b.id,b.numId,b.videoId,b.name,b.sp,b.date,c.name as userName from video a,video_num b,user c where a.id = b.videoId and a.uploadId = c.id and videoId = #{videoId} and numId = #{numId}
+   </select>
+
+   <insert id="add" parameterType="videoNum" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        insert into video_num
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            numId,videoId,name,sp,date
+        </trim>
+        <trim prefix="value(" suffix=")" suffixOverrides=",">
+            #{numId},#{videoId},#{name},#{sp},#{date}
+        </trim>
+    </insert>
+
+
+   <update id="update" parameterType="videoNum">
+       update video_num
+       <set>
+           <if test="name!=null and name !=''">
+            name = #{name},
+           </if>
+           <if test="videoId!=null and name !=''">
+               videoId = #{videoId},
+           </if>
+           <if test="sp!=null and sp !=''">
+               sp = #{sp},
+           </if>
+       </set>
+       where id = #{id}
+    </update>
+
+   <delete id="deleteByIds">
+      delete from video_num where id in
+      <foreach collection="array" open="(" close=")" separator="," item="id">
+         #{id}
+      </foreach>
+   </delete>
+
+</mapper>

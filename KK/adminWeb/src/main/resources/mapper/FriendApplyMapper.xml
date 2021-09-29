@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.neu.mapper.FriendApplyMapper">
+
+    <select id="find" resultType="friendApplyVO" parameterType="friendApplyDTO">
+        select a.id,a.userId,b.name as userName from friendApply a,user b
+        <where>
+            a.yourId = b.id and b.state = '正常'
+            <if test="userId != null and userId != ''">
+                and a.userId = #{userId}
+            </if>
+        </where>
+    </select>
+
+   <select id="findById" resultType="friendApplyVO">
+        select id,yourId,userId from friendApply where id = #{id}
+    </select>
+
+    <insert id="add" parameterType="friendApply">
+        insert into friendApply
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            yourId,
+            userId,
+        </trim>
+        values(
+        <trim  suffix=")" suffixOverrides=",">
+            #{yourId},
+            #{userId},
+        </trim>
+    </insert>
+
+   <update id="update" parameterType="friendApply">
+       update friendApply
+       <set>
+           <if test="userId!=null and userId !=''">
+               userId = #{userId},
+           </if>
+       </set>
+       where id = #{id}
+    </update>
+
+   <delete id="deleteByIds">
+      delete from friendApply where id in
+      <foreach collection="array" open="(" close=")" separator="," item="id">
+         #{id}
+      </foreach>
+   </delete>
+
+</mapper>

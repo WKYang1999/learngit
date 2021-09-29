@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.neu.mapper.ReportVideoMapper">
+
+    <select id="find" resultType="reportVideoVO" parameterType="reportVideoDTO">
+        select a.id,a.videoId,b.videoName,count(a.userId) as count from reportVideo a,video b
+        <where>
+            a.videoId = b.id
+            <if test="videoName != null and videoName != ''">
+                <bind name="likeName" value="'%' + _parameter.videoName + '%'" />
+                and b.videoName like #{likeName}
+            </if>
+        </where>
+        GROUP BY a.videoId
+    </select>
+
+   <select id="findById" resultType="reportVideoVO">
+        select a.id,a.videoId,a.userId,b.videoName from reportVideo a,video b where a.videoId = b.id and a.id = #{id}
+    </select>
+
+    <select id="findReport" resultType="reportVideoVO">
+        select * from reportVideo where userId = #{userId} and videoId = #{videoId}
+    </select>
+
+    <insert id="add" parameterType="reportVideo">
+        insert into reportVideo
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            videoId,
+            userId,
+        </trim>
+        values(
+        <trim  suffix=")" suffixOverrides=",">
+            #{videoId},
+            #{userId},
+        </trim>
+    </insert>
+
+
+   <update id="update" parameterType="reportVideo">
+       update reportVideo
+       <set>
+           <if test="videoId!=null and videoId !=''">
+               videoId = #{videoId},
+           </if>
+       </set>
+       where id = #{id}
+    </update>
+
+    <update id="updateVideo">
+        update video set state = '已下架' where id in
+        <foreach collection="array" open="(" close=")" separator="," item="id">
+            #{id}
+        </foreach>
+    </update>
+
+   <delete id="deleteByIds">
+      delete from reportVideo where videoId in
+       <foreach collection="array" open="(" close=")" separator="," item="id">
+           #{id}
+       </foreach>
+   </delete>
+
+</mapper>

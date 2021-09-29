@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.neu.mapper.ContentMapper">
+
+    <select id="find" resultType="contentVO" parameterType="contentDTO">
+        select * from contents
+    </select>
+
+   <select id="findById" resultType="contentVO">
+        select * from contents where id = #{id}
+    </select>
+
+    <select id="findLT" resultType="contentVO">
+        select a.id,b.id as userId,b.name,a.content,a.date
+        from contents a
+        left join user b on a.yourId = b.id
+        where (a.yourId = #{yourId} and a.userId = #{userId}) or (a.userId = #{yourId} and yourId = #{userId}) ORDER BY a.date desc
+    </select>
+
+    <insert id="add" parameterType="content">
+        insert into contents
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            yourId,
+            userId,
+            content,
+            `date`
+        </trim>
+        values(
+        <trim  suffix=")" suffixOverrides=",">
+            #{yourId},
+            #{userId},
+            #{content},
+            #{date},
+        </trim>
+    </insert>
+
+   <update id="update" parameterType="content">
+       update contents
+       <set>
+           <if test="userId!=null and userId !=''">
+               userId = #{userId},
+           </if>
+       </set>
+       where id = #{id}
+    </update>
+
+    <delete id="deleteByIds">
+        delete from contents where id in
+        <foreach collection="array" open="(" close=")" separator="," item="id">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.neu.mapper.HomePageMapper">
+
+    <select id="find" resultType="homePageVO" parameterType="homePageDTO">
+        select * from homePage
+        <where>
+            <if test="name != null and name != ''">
+                and name = #{name}
+            </if>
+        </where>
+    </select>
+
+    <select id="findHome" resultType="homePageVO">
+        select * from homePage where name = #{name} and state = '显示'
+    </select>
+
+
+   <select id="findById" resultType="homePageVO">
+            select * from homePage where id = #{id}
+    </select>
+
+    <insert id="add" parameterType="homePage">
+        insert into homePage
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            name,
+            state,
+        </trim>
+        values(
+        <trim  suffix=")" suffixOverrides=",">
+            #{name},
+            #{state},
+        </trim>
+    </insert>
+
+
+   <update id="update" parameterType="homePage">
+       update homePage
+       <set>
+           <if test="state!=null and state !=''">
+               state = #{state},
+           </if>
+       </set>
+       where id = #{id}
+    </update>
+
+    <update id="updateState">
+        update homePage set state = '不显示' where id in
+        <foreach collection="array" open="(" close=")" separator="," item="id">
+            #{id}
+        </foreach>
+    </update>
+
+    <update id="updateSS">
+        update homePage set state = '显示' where id in
+        <foreach collection="array" open="(" close=")" separator="," item="id">
+            #{id}
+        </foreach>
+    </update>
+
+   <delete id="deleteByIds">
+      delete from homePages where id in
+      <foreach collection="array" open="(" close=")" separator="," item="id">
+         #{id}
+      </foreach>
+   </delete>
+
+</mapper>

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.neu.mapper.RecommMapper">
+
+    <select id="find" resultType="recommVO" parameterType="recommDTO">
+        select a.id,b.videoName,a.date from recomm a,video b
+        <where>
+            a.videoId = b.id
+            <if test="userId != null and userId != ''">
+                and a.userId = #{userId}
+            </if>
+            <if test="videoName != null and videoName != ''">
+                and b.videoName = #{videoName}
+            </if>
+        </where>
+    </select>
+
+    <select id="findCC" resultType="recommVO">
+        select d.head,d.name as userName,b.date,b.videoId,c.videoName from friend a,recomm b,video c,`user` d where a.userId = b.userId and b.videoId = c.id and b.userId = d.id and a.yourId = #{id} ORDER BY b.date desc
+    </select>
+
+   <select id="findById" resultType="recommVO">
+        select * from recomm where id = #{id}
+    </select>
+
+    <select id="findRecomm" resultType="recommVO">
+        select * from recomm where userId = #{userId} and videoId = #{videoId}
+    </select>
+
+    <insert id="add" parameterType="recomm">
+        insert into recomm
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            userId,
+            videoId,
+            `date`
+        </trim>
+        values(
+        <trim  suffix=")" suffixOverrides=",">
+            #{userId},
+            #{videoId},
+            #{date}
+        </trim>
+    </insert>
+
+
+   <update id="update" parameterType="recomm">
+       update recomm
+       <set>
+           <if test="videoId!=null and videoId !=''">
+               videoId = #{videoId},
+           </if>
+       </set>
+       where id = #{id}
+    </update>
+
+   <delete id="deleteByIds">
+      delete from recomm where id in
+      <foreach collection="array" open="(" close=")" separator="," item="id">
+         #{id}
+      </foreach>
+   </delete>
+
+</mapper>

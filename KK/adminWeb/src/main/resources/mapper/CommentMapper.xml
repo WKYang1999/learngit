@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.neu.mapper.CommentMapper">
+
+
+    <select id="find" resultType="commentsVO" parameterType="commentsDTO">
+        select b.videoName,d.name,a.id,a.videoId,a.userId,a.content,a.dateComm from comments a,video b,user d
+        <where>
+            a.videoId = b.id and a.userId = d.id
+            <if test="videoId != null and videoId != ''">
+                and a.videoId = #{videoId}
+            </if>
+            <if test="userId != null and userId != ''">
+                and a.userId = #{userId}
+            </if>
+        </where>
+    </select>
+
+
+   <select id="findById" resultType="commentsVO">
+        select * from comments where id = #{id}
+    </select>
+
+    <select id="findVideo" resultType="commentsVO">
+        select b.videoName,d.name,a.id,a.videoId,a.userId,a.content,a.dateComm from comments a,video b,user d where a.videoId = b.id and a.userId = d.id and videoId = #{videoId} order by dateComm desc
+    </select>
+
+    <insert id="add" parameterType="comments">
+        insert into comments
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            videoId,
+            userId,
+            <if test="content!=null">
+                content,
+            </if>
+            dateComm,
+        </trim>
+        values(
+        <trim  suffix=")" suffixOverrides=",">
+            #{videoId},
+            #{userId},
+            <if test="content!=null">
+                #{content},
+            </if>
+            #{dateComm},
+        </trim>
+    </insert>
+
+
+   <update id="update" parameterType="comments">
+       update comments
+       <set>
+           <if test="content!=null and content !=''">
+               content = #{content},
+           </if>
+       </set>
+       where id = #{id}
+    </update>
+
+   <delete id="deleteByIds">
+      delete from comments where id in
+      <foreach collection="array" open="(" close=")" separator="," item="id">
+         #{id}
+      </foreach>
+   </delete>
+
+</mapper>

@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.neu.mapper.VideoMapper">
+
+    <select id="find" resultType="videoVO" parameterType="videoDTO">
+        select * from video
+        <where>
+            <if test="videoName != null and videoName != ''">
+                <bind name="likeName" value="'%' + _parameter.videoName + '%'" />
+                and videoName like #{likeName}
+            </if>
+            <if test="uploadId != null and uploadId != ''">
+                and uploadId = #{uploadId}
+            </if>
+            <if test="state != null and state != ''">
+                and state = #{state}
+            </if>
+        </where>
+    </select>
+
+    <select id="findHot" resultType="comicVO">
+        select * from video where clickNum > 100 and state = '已上架' ORDER BY clickNum desc LIMIT 4
+    </select>
+
+    <select id="findById" resultType="videoVO">
+        select * from video where id = #{id}
+    </select>
+
+    <select id="findComic" resultType="comicVO">
+        select * from video where `primary` = #{s} and state = '已上架' ORDER BY clickNum desc LIMIT 12
+    </select>
+
+    <insert id="add" parameterType="video">
+        insert into video
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            videoName,time,
+            <if test="brief!=null">
+                brief,
+            </if>
+            <if test="primary!=null">
+                `primary`,
+            </if>
+            <if test="secondary!=null">
+                secondary,
+            </if>
+            <if test="state!=null">
+                state,
+            </if>
+            <if test="author!=null">
+                author,
+            </if>
+            <if test="pic!=null">
+                pic,
+            </if>
+            <if test="uploadId!=null">
+                uploadId,
+            </if>
+        </trim>
+        values(
+        <trim suffix=")" suffixOverrides=",">
+            #{videoName},#{time},
+            <if test="brief!=null">
+                #{brief},
+            </if>
+            <if test="primary!=null">
+                #{primary},
+            </if>
+            <if test="secondary!=null">
+                #{secondary},
+            </if>
+            <if test="state!=null">
+                #{state},
+            </if>
+            <if test="author!=null">
+                #{author},
+            </if>
+            <if test="pic!=null">
+                #{pic},
+            </if>
+            <if test="uploadId!=null">
+                #{uploadId},
+            </if>
+        </trim>
+    </insert>
+
+
+    <update id="update" parameterType="video">
+       update video
+        <set>
+            <if test="videoName != null and videoName != ''">
+                videoName = #{videoName},
+            </if>
+            <if test="brief != null and brief != ''">
+                brief = #{brief},
+            </if>
+            <if test="primary != null and primary != ''">
+                `primary` = #{primary},
+            </if>
+            <if test="secondary != null and secondary != ''">
+                secondary = #{secondary},
+            </if>
+            <if test="state != null and state != ''">
+                state = #{state},
+            </if>
+            <if test="author != null and author != ''">
+                author = #{author},
+            </if>
+            <if test="pic != null and pic != ''">
+                pic = #{pic},
+            </if>
+        </set>
+       where id = #{id}
+    </update>
+
+    <update id="addClick">
+        update video set clickNum = clickNum + 1 where id = #{id}
+    </update>
+
+    <update id="deleteByIds">
+        update video set state = '已下架' where id in
+        <foreach collection="array" open="(" close=")" separator="," item="id">
+            #{id}
+        </foreach>
+    </update>
+
+    <update id="delete">
+        update video set state = '已上架' where id in
+        <foreach collection="array" open="(" close=")" separator="," item="id">
+            #{id}
+        </foreach>
+    </update>
+
+</mapper>

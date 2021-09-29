@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.neu.mapper.FriendMapper">
+
+    <select id="find" resultType="friendVO" parameterType="friendDTO">
+        select a.id,a.userId,b.name as userName from friend a,user b
+        <where>
+            a.userId = b.id and b.state = '正常'
+            <if test="yourId != null and yourId != ''">
+                and a.yourId = #{yourId}
+            </if>
+        </where>
+    </select>
+
+
+   <select id="findById" resultType="friendVO">
+        select id,yourId,userId from friend where id = #{id}
+    </select>
+
+    <select id="findFriend" resultType="userVO">
+        select * from `user` a where not exists(select 1 from friendApply b where b.userId = a.id and b.yourId = #{id}) and not exists(select 1 from friendApply d where d.yourId = a.id and d.userId = #{id}) and not exists(select 1 from friend where userId = a.id and yourId = #{id}) and a.id != #{id} and a.state = '正常'
+    </select>
+
+    <insert id="add" parameterType="friend">
+        insert into friend
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            yourId,
+            userId,
+        </trim>
+        values(
+        <trim  suffix=")" suffixOverrides=",">
+            #{yourId},
+            #{userId},
+        </trim>
+    </insert>
+
+   <update id="update" parameterType="friend">
+       update friend
+       <set>
+           <if test="userId!=null and userId !=''">
+               userId = #{userId},
+           </if>
+       </set>
+       where id = #{id}
+    </update>
+
+    <delete id="delete">
+        delete from friend where yourId = #{yourId} and userId = #{userId}
+    </delete>
+
+   <delete id="deleteByIds">
+      delete from friend where id in
+      <foreach collection="array" open="(" close=")" separator="," item="id">
+         #{id}
+      </foreach>
+   </delete>
+
+</mapper>

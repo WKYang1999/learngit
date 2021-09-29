@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.neu.mapper.UserMapper">
+
+
+    <select id="find" resultType="userVO" parameterType="userDTO">
+        select u.*,r.name roleName from user u left join middle_role_user d on u.id = d.userId left join role r on d.roleId = r.id
+        <where>
+            <if test="name != null and name != ''">
+                <bind name="likeName" value="'%' + _parameter.name + '%'" />
+                and u.name like #{likeName}
+            </if>
+            <if test="loginName != null and loginName != ''">
+                <bind name="likeLoginName" value="'%' + _parameter.loginName + '%'" />
+                and u.loginName like #{likeLoginName}
+            </if>
+            <if test="state != null and state != ''">
+                and u.state = #{state}
+            </if>
+        </where>
+    </select>
+
+    <resultMap id="detailResultMap" type="userVO">
+        <id column="id" property="id"/>
+        <result column="name" property="name"></result>
+        <result column="loginName" property="loginName"></result>
+        <result column="deptId" property="deptId"></result>
+
+
+       <!-- <result column="deptId" property="deptId" javaType="array"></result>-->
+        <!--
+        <collection property="roleId" columnPrefix="m_">
+            <result column="roleId" property="roleId"></result>
+        </collection>-->
+    </resultMap>
+
+   <select id="findById" resultType="userVO">
+        select *from user where id = #{id}
+    </select>
+
+   <insert id="add" parameterType="user" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        insert into user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            name,loginName,password,
+            <if test="head!=null">
+                head,
+            </if>
+        </trim>
+        <trim prefix="value(" suffix=")" suffixOverrides=",">
+            #{name},#{loginName},#{password},
+            <if test="head!=null">
+                #{head},
+            </if>
+        </trim>
+    </insert>
+
+
+   <update id="update" parameterType="user">
+       update user
+       <set>
+           <if test="name!=null and name !=''">
+            name = #{name},
+           </if>
+           <if test="loginName!=null and loginName !=''">
+               loginName = #{loginName},
+           </if>
+           <if test="head!=null and head !=''">
+               head = #{head},
+           </if>
+       </set>
+       where id = #{id}
+    </update>
+
+    <update id="updatePassword" parameterType="user">
+        update user
+        <set>
+            <if test="name!=null and name !=''">
+                name = #{name},
+            </if>
+            <if test="loginName!=null and loginName !=''">
+                loginName = #{loginName},
+            </if>
+            <if test="head!=null and head !=''">
+                head = #{head},
+            </if>
+            <if test="password!=null and password !=''">
+                password = #{password},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <update id="deleteByIds">
+        update user set state = '注销' where id in
+        <foreach collection="array" open="(" close=")" separator="," item="id">
+            #{id}
+        </foreach>
+    </update>
+
+    <update id="delete">
+        update user set state = '正常' where id in
+        <foreach collection="array" open="(" close=")" separator="," item="id">
+            #{id}
+        </foreach>
+    </update>
+
+   <select id="login" resultType="userVO">
+      select *from user where loginName = #{loginName} and password = #{password}
+   </select>
+
+    <select id="register" resultType="userVO">
+      select *from user where loginName = #{loginName}
+   </select>
+
+
+    <!---绑定关系-->
+    <insert id="bind">
+        insert into middle_role_user (userId,roleId) values(#{userId},#{roleId})
+    </insert>
+
+    <delete id="unbind" parameterType="int">
+        delete from middle_role_user where userId = #{userId}
+    </delete>
+</mapper>

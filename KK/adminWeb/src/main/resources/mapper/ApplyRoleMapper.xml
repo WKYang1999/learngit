@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.neu.mapper.ApplyRoleMapper">
+
+    <select id="find" resultType="applyRoleVO" parameterType="applyRoleDTO">
+        select a.id,a.userId,b.`name` as userName,c.`name` as roleName from apply a,`user` b,role c,middle_role_user d
+        <where>
+            a.userId = b.id and b.id = d.userId and d.roleId = c.id
+        </where>
+    </select>
+
+   <select id="findById" resultType="applyRoleVO">
+        select a.id,a.userId,b.`name` as userName,c.`name` as roleName from apply a,`user` b,role c,middle_role_user d where a.userId = b.id and b.id = d.userId and d.roleId = c.id and id = #{id}
+    </select>
+
+    <select id="findByUserId" resultType="applyRoleVO">
+        select * from apply where userId = #{userId}
+    </select>
+
+    <insert id="add" parameterType="applyRole">
+        insert into apply
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            userId,
+        </trim>
+        values(
+        <trim  suffix=")" suffixOverrides=",">
+            #{userId},
+        </trim>
+    </insert>
+
+   <update id="update" parameterType="applyRole">
+       update apply
+       <set>
+           <if test="userId!=null and userId !=''">
+               userId = #{userId},
+           </if>
+       </set>
+       where id = #{id}
+    </update>
+
+    <update id="updateRole">
+        update middle_role_user set roleId = 3 where userId in (select userId from apply where id in
+        <foreach collection="array" open="(" close=")" separator="," item="id">
+            #{id}
+        </foreach>
+        )
+    </update>
+
+    <delete id="deleteByIds">
+        delete from apply where id in
+        <foreach collection="array" open="(" close=")" separator="," item="id">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>
